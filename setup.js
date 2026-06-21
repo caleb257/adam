@@ -1,19 +1,8 @@
 #!/usr/bin/env node
-// ============================================================
-// ADAM BRAIN SETUP
-// Runs schema + seed data against Railway Postgres
-// Usage: node setup.js
-//        node setup.js --seed-only   (skip schema, just reseed)
-//        node setup.js --schema-only (just schema)
-// ============================================================
-
 require('dotenv').config({ path: '.env' });
 const { Client } = require('pg');
 const fs = require('fs');
 const path = require('path');
-
-const SCHEMA_FILE = path.join(__dirname, 'schema.sql');
-const SEED_FILE   = path.join(__dirname, 'seed.sql');
 
 const args = process.argv.slice(2);
 const seedOnly   = args.includes('--seed-only');
@@ -21,50 +10,54 @@ const schemaOnly = args.includes('--schema-only');
 
 async function run() {
   const client = new Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
-
   try {
-    console.log('Connecting to Adam Brain database...');
+    console.log('Connecting to Adam DB...');
     await client.connect();
-    console.log('Connected.');
+    console.log('Connected.\n');
 
     if (!seedOnly) {
-      console.log('\nRunning schema...');
-      const schema = fs.readFileSync(SCHEMA_FILE, 'utf8');
-      await client.query(schema);
-      console.log('Schema complete.');
+      console.log('Running schema...');
+      await client.query(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
+      console.log('Schema ✅\n');
     }
 
     if (!schemaOnly) {
-      console.log('\nSeeding brain with Tampa Bay market data...');
-      const seed = fs.readFileSync(SEED_FILE, 'utf8');
-      await client.query(seed);
-      console.log('Seed complete.');
+      console.log('Seeding v1 (base Tampa Bay data)...');
+      await client.query(fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf8'));
+      console.log('Seed v1 ✅\n');
+
+      console.log('Seeding v2 (expanded: 100+ zips, 40+ rehab items, 50+ knowledge, templates, playbook)...');
+      await client.query(fs.readFileSync(path.join(__dirname, 'seed-v2.sql'), 'utf8'));
+      console.log('Seed v2 ✅\n');
     }
 
-    // Verify row counts
+    // Print row counts
     const tables = [
-      'market_areas', 'hud_fmr', 'rehab_costs', 'buy_criteria',
-      'negotiation_playbook', 'message_templates', 'adam_trust_scores',
-      'market_knowledge', 'property_tax_data', 'insurance_data',
-      'adam_learnings', 'ccg_entities', 'title_companies', 'hard_money_lenders'
+      'market_areas','hud_fmr','rehab_costs','buy_criteria','wholesalers',
+      'cash_buyers','deals','negotiation_playbook','message_templates',
+      'adam_trust_scores','market_knowledge','adam_learnings',
+      'property_tax_data','insurance_data','title_companies',
+      'hard_money_lenders','ccg_entities'
     ];
 
-    console.log('\n── ADAM BRAIN STATUS ─────────────────────────────');
+    console.log('── ADAM BRAIN STATUS ─────────────────────────────');
+    let total = 0;
     for (const t of tables) {
       const r = await client.query(`SELECT COUNT(*) FROM ${t}`);
-      const count = r.rows[0].count.padStart(4);
-      console.log(`  ${count} rows  ${t}`);
+      const n = parseInt(r.rows[0].count);
+      total += n;
+      console.log(`  ${String(n).padStart(5)}  ${t}`);
     }
+    console.log(`  ─────────────────────────────────────────────`);
+    console.log(`  ${String(total).padStart(5)}  TOTAL ROWS`);
     console.log('──────────────────────────────────────────────────');
-    console.log('\nAdam brain is loaded. Ready to build the agent layer.\n');
-
-  } catch (err) {
-    console.error('Setup error:', err.message);
-    if (err.detail) console.error('Detail:', err.detail);
+    console.log('\nBase brain ready. Run: node migrate.js to load Urban + Sheet data\n');
+  } catch(e) {
+    console.error('Error:', e.message);
+    if (e.detail) console.error('Detail:', e.detail);
     process.exit(1);
   } finally {
     await client.end();
   }
 }
-
 run();

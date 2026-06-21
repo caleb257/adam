@@ -1,15 +1,20 @@
 {
   "name": "adam-brain",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Adam - CCG Acquisitions Agent Brain",
   "main": "setup.js",
   "scripts": {
     "setup": "node setup.js",
     "seed": "node setup.js --seed-only",
-    "schema": "node setup.js --schema-only"
+    "schema": "node setup.js --schema-only",
+    "migrate": "node migrate.js",
+    "enrich": "node enrich.js",
+    "full": "node setup.js && node migrate.js && node enrich.js"
   },
   "dependencies": {
     "pg": "^8.11.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "googleapis": "^144.0.0",
+    "node-fetch": "^2.7.0"
   }
 }
