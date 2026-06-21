@@ -1,0 +1,15 @@
+{
+  "name": "adam-brain",
+  "version": "0.1.0",
+  "description": "Adam - CCG Acquisitions Agent Brain",
+  "main": "setup.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "seed": "node setup.js --seed-only",
+    "schema": "node setup.js --schema-only"
+  },
+  "dependencies": {
+    "pg": "^8.11.3",
+    "dotenv": "^16.4.5"
+  }
+}
