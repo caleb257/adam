@@ -26,6 +26,7 @@ async function run() {
         ['seed.sql', 'Base Tampa Bay market data (148 market areas, 40 rehab costs, 23 templates, 26 trust scores)'],
         ['seed-v2.sql', 'Expanded v2 (50+ market areas, legal/construction/finance knowledge, 30 templates, 20 scenarios)'],
         ['seed-v3.sql', 'Maximum intelligence v3 (DD checklist, scope templates, contractor knowledge, deal structures, 30 templates, 15 learnings)'],
+        ['seed-v4.sql', 'Reasoning layer v4 (decision trees, deal examples, seller profiles, vendor ecosystem, communication timing, lead source data)'],
       ];
 
       for (const [file, desc] of seeds) {
@@ -44,7 +45,7 @@ async function run() {
       'property_tax_data','insurance_data','title_companies',
       'hard_money_lenders','ccg_entities','due_diligence_items',
       'scope_templates','contractor_knowledge','deal_structures',
-      'market_benchmarks','competitor_profiles'
+      'market_benchmarks','competitor_profiles','decision_trees','deal_examples','seller_profiles','vendor_ecosystem','communication_timing','lead_source_performance'
     ];
 
     console.log('── ADAM BRAIN STATUS ─────────────────────────────');
