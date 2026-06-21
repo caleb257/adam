@@ -27,6 +27,7 @@ async function run() {
         ['seed-v2.sql', 'Expanded v2 (50+ market areas, legal/construction/finance knowledge, 30 templates, 20 scenarios)'],
         ['seed-v3.sql', 'Maximum intelligence v3 (DD checklist, scope templates, contractor knowledge, deal structures, 30 templates, 15 learnings)'],
         ['seed-v4.sql', 'Reasoning layer v4 (decision trees, deal examples, seller profiles, vendor ecosystem, communication timing, lead source data)'],
+        ['seed-v5.sql', 'Genius layer v5 (school ratings, HOA data, subdivision intel, DSCR programs, permit timing, dead deal patterns, epistemic rules, performance targets)'],
       ];
 
       for (const [file, desc] of seeds) {
@@ -45,7 +46,7 @@ async function run() {
       'property_tax_data','insurance_data','title_companies',
       'hard_money_lenders','ccg_entities','due_diligence_items',
       'scope_templates','contractor_knowledge','deal_structures',
-      'market_benchmarks','competitor_profiles','decision_trees','deal_examples','seller_profiles','vendor_ecosystem','communication_timing','lead_source_performance'
+      'market_benchmarks','competitor_profiles','decision_trees','deal_examples','seller_profiles','vendor_ecosystem','communication_timing','lead_source_performance','subdivision_intelligence','permit_timing','dscr_programs','performance_targets','dead_deal_patterns'
     ];
 
     console.log('── ADAM BRAIN STATUS ─────────────────────────────');
