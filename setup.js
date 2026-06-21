@@ -22,13 +22,18 @@ async function run() {
     }
 
     if (!schemaOnly) {
-      console.log('Seeding v1 (base Tampa Bay data)...');
-      await client.query(fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf8'));
-      console.log('Seed v1 ✅\n');
+      const seeds = [
+        ['seed.sql', 'Base Tampa Bay market data (148 market areas, 40 rehab costs, 23 templates, 26 trust scores)'],
+        ['seed-v2.sql', 'Expanded v2 (50+ market areas, legal/construction/finance knowledge, 30 templates, 20 scenarios)'],
+        ['seed-v3.sql', 'Maximum intelligence v3 (DD checklist, scope templates, contractor knowledge, deal structures, 30 templates, 15 learnings)'],
+      ];
 
-      console.log('Seeding v2 (expanded: 100+ zips, 40+ rehab items, 50+ knowledge, templates, playbook)...');
-      await client.query(fs.readFileSync(path.join(__dirname, 'seed-v2.sql'), 'utf8'));
-      console.log('Seed v2 ✅\n');
+      for (const [file, desc] of seeds) {
+        console.log(`Seeding ${file}...`);
+        console.log(`  ${desc}`);
+        await client.query(fs.readFileSync(path.join(__dirname, file), 'utf8'));
+        console.log(`  ✅\n`);
+      }
     }
 
     // Print row counts
@@ -37,21 +42,27 @@ async function run() {
       'cash_buyers','deals','negotiation_playbook','message_templates',
       'adam_trust_scores','market_knowledge','adam_learnings',
       'property_tax_data','insurance_data','title_companies',
-      'hard_money_lenders','ccg_entities'
+      'hard_money_lenders','ccg_entities','due_diligence_items',
+      'scope_templates','contractor_knowledge','deal_structures',
+      'market_benchmarks','competitor_profiles'
     ];
 
     console.log('── ADAM BRAIN STATUS ─────────────────────────────');
     let total = 0;
     for (const t of tables) {
-      const r = await client.query(`SELECT COUNT(*) FROM ${t}`);
-      const n = parseInt(r.rows[0].count);
-      total += n;
-      console.log(`  ${String(n).padStart(5)}  ${t}`);
+      try {
+        const r = await client.query(`SELECT COUNT(*) FROM ${t}`);
+        const n = parseInt(r.rows[0].count);
+        total += n;
+        if (n > 0) console.log(`  ${String(n).padStart(5)}  ${t}`);
+      } catch { /* table may not exist yet */ }
     }
     console.log(`  ─────────────────────────────────────────────`);
-    console.log(`  ${String(total).padStart(5)}  TOTAL ROWS`);
+    console.log(`  ${String(total).padStart(5)}  TOTAL STATIC ROWS`);
     console.log('──────────────────────────────────────────────────');
-    console.log('\nBase brain ready. Run: node migrate.js to load Urban + Sheet data\n');
+    console.log('\nNext: run migrate.js to load Urban DB + Derek Sheet data');
+    console.log('Then: run enrich.js for deep JSONB intelligence extraction\n');
+    console.log('Full stack: node migrate.js && node enrich.js\n');
   } catch(e) {
     console.error('Error:', e.message);
     if (e.detail) console.error('Detail:', e.detail);
