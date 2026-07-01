@@ -1,20 +1,17 @@
 {
-  "name": "adam-brain",
-  "version": "0.2.0",
-  "description": "Adam - CCG Acquisitions Agent Brain",
-  "main": "setup.js",
+  "name": "adam",
+  "version": "2.0.0",
+  "description": "CCG AI Acquisitions Agent — monitors deal inbox, parses with Claude, sends to Urban",
+  "main": "server.js",
   "scripts": {
-    "setup": "node setup.js",
-    "seed": "node setup.js --seed-only",
-    "schema": "node setup.js --schema-only",
-    "migrate": "node migrate.js",
-    "enrich": "node enrich.js",
-    "full": "node setup.js && node migrate.js && node enrich.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "pg": "^8.11.3",
+    "@anthropic-ai/sdk": "^0.20.0",
+    "cheerio": "^1.0.0",
     "dotenv": "^16.4.5",
-    "googleapis": "^144.0.0",
+    "express": "^4.18.3",
+    "imapflow": "^1.0.162",
     "node-fetch": "^2.7.0"
   }
 }
